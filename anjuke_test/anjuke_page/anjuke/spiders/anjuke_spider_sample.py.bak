@@ -1,0 +1,106 @@
+#coding=utf-8
+import scrapy
+from scrapy.selector import Selector
+from scrapy.contrib.spiders import CrawlSpider,Rule
+from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
+from scrapy.http import Request
+from anjuke.items import AnjukeItem
+from anjuke.settings import global_spider
+from scrapy import log,FormRequest
+import re,time,sys,json,MySQLdb,copy
+from scrapy.http.cookies import CookieJar
+reload(sys)
+sys.setdefaultencoding( "utf-8" )
+
+
+class anjuke_spider(CrawlSpider):
+	
+	spider_id = global_spider.get_spider_id()
+	global_spider.spider_id_add()
+	name = "anjuke_spider%s"%spider_id
+	
+	allowed_domains = ["anjuke.com"]
+	start_urls = ["http://guangzhou.anjuke.com/sale/",]
+
+	def _item_init(self,item):
+
+		item['Cur_url'] = ''
+		item['City'] = ''
+		item['District'] = ''
+		item['Block'] = ''
+		item['Estate'] = ''
+		item['Title'] = ''
+		item['Price'] = ''
+		item['Layout'] = ''
+		item['Decoration'] = ''
+		item['Location'] = ''
+		item['Area'] = ''
+		item['Unit_Price'] = ''
+		item['Years'] = ''
+		item['Orientation'] = ''
+		item['Downpayment'] = ''
+		item['Type'] = ''
+		item['Floor'] = ''
+		item['Monthly_Payments'] = ''
+		item['Desc'] = ''
+		item['Agent'] = ''
+		item['Agent_Phone'] = ''
+		item['Agent_Company'] = ''
+
+		return item
+
+	def start_requests(self):
+
+		for url in self.start_urls:
+			yield Request(url,
+							callback = self.parse_price_page)
+
+	def parse_price_page(self, response):
+
+		print response.url
+		upper_bound = 1000
+		step = upper_bound/200
+		spider_upper_bound = (step)*(self.spider_id + 1)
+		spider_lower_bound = (step)*(self.spider_id)
+		if spider_lower_bound >= 999:
+			spider_upper_bound = 99999
+
+		print spider_upper_bound,spider_lower_bound
+
+		yield Request(response.url,
+						callback = self.parse_before_page,dont_filter=True,meta={'upper':spider_upper_bound,'lower':spider_lower_bound})
+
+
+	def parse_before_page(self, response) :
+		
+		sel = Selector(response)
+		url_format = 'http://guangzhou.anjuke.com/sale/'
+		print response.meta
+		try:
+			for page_index in range(1,2):
+				url = url_format+('p%s/'%page_index)+('?to_price=%s&from_price=%s'%(response.meta['upper'],response.meta['lower']))
+				yield Request(url,
+							callback = self.parse_after_page,dont_filter=True,meta={'page':page_index})
+		except Exception as e:
+			print Exception,":",e
+
+
+	def parse_after_page(self,response):
+
+		sel = Selector(response)
+		page_index = response.meta['page']
+		try:
+			cur_page = sel.xpath('//div[@class="multi-page"]/i[@class="curr"]/text()').extract()[0]
+			if int(cur_page) == int(page_index):
+				links = SgmlLinkExtractor(allow=(r'http://.+.anjuke.com/prop/view/.+'),restrict_xpaths=('//ul[@id="houselist-mod"]'),unique=0).extract_links(response)
+				for link in links:
+					try:
+						item = AnjukeItem()
+						item['Cur_url'] = link.url
+						yield item
+					except Exception as e:
+						print Exception,":",e
+			else:
+				pass
+		except Exception as e:
+			print Exception,":",e
