@@ -151,6 +151,15 @@ def upload_new_file(self,source_addr,source_port,user_name,passwd,file_path,file
                     print "[ERROR]",cur_time,":",err_message
                     print "[RETRY]",cur_time
                     try:
+                        print "[ROLL BACK]",cur_time
+                        delete_upload_file_cmd = 'fdfs_delete_file /etc/fdfs/client.conf {file_store_id}'.\
+                                format(file_store_id=file_store_id)
+                        stdin,stdout,stderr = cur_connection.exec_command(delete_upload_file_cmd)
+                        if stderr == "":
+                            print "[ROLL BACK SUCCESS]",cur_time
+                        else:
+                            print "[Warning]",cur_time,":",err_message
+                            return
                         celery.send_task("async_html_update_service.upload_service.upload_new_file",
                                 args=[source_addr,source_port,user_name,passwd,file_path,file_name,version_time,source_route],
                                 queue='upload_queue')
@@ -163,6 +172,15 @@ def upload_new_file(self,source_addr,source_port,user_name,passwd,file_path,file
         except Exception as e:
             try:
                 print Exception,":",e
+                print "[ROLL BACK]",cur_time
+                delete_upload_file_cmd = 'fdfs_delete_file /etc/fdfs/client.conf {file_store_id}'.\
+                        format(file_store_id=file_store_id)
+                stdin,stdout,stderr = cur_connection.exec_command(delete_upload_file_cmd)
+                if stderr == "":
+                    print "[ROLL BACK SUCCESS]",cur_time
+                else:
+                    print "[Warning]",cur_time,":",err_message
+                    return
                 celery.send_task("async_html_update_service.upload_service.upload_new_file",
                         args=[source_addr,source_port,user_name,passwd,file_path,file_name,version_time,source_route],
                         queue='upload_queue')
