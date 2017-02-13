@@ -1,0 +1,47 @@
+#[查询小区]:
+--HOST:http://wx.htvaluer.com/WeiXin20IF/api/Common/SelectProject
+--HEADERS:
+    Host: wx.htvaluer.com
+    Accept: */*
+    Connection: keep-alive
+    X-Requested-With: XMLHttpRequest
+    Accept-Encoding: gzip, deflate
+    Accept-Language: zh-cn
+    Content-Type: application/json;charset-utf-8
+    Origin: http://wx.htvaluer.com
+    Content-Length: 150
+    Connection: keep-alive
+    User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 9_3_2 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Mobile/13F69 MicroMessenger/6.3.31 NetType/WIFI Language/zh_CN
+    Referer: http://wx.htvaluer.com/HouseEnquiry/search/HouseSearchResult.aspx?keyword=%E6%81%92%E5%A4%A7
+--METHOD:POST
+--REQUEST BODY:{"Data":"{\"TypeCode\":4,\"AreaCode\":\"510100\",\"Address\":\"恒大\",\"PageIndex\":1,\"PageSize\":20,\"OpenId\":\"o8Lp5t7n59DeX3U0C7Kric9qKx-Q\"}"}
+--CIYI CODE:
+    成都:510100
+    重庆:500100
+--RESPONSE EXP:
+    "{\"ReturnCode\":0,\"Remark\":\"-2\"}" ## First time with new openID
+    "{\"CaseId\":\"1f0403d9-0b05-42f1-9d3f-85ee388710d9\",\"ProjectList\":[{\"id\":\"714659882540402124\",\"projectname\":\"恒大都汇华庭\",\"address\":\"义学巷60号,镋钯街38号\",\"areaname\":\"锦江区\",\"areacode\":\"510104\"},{\"id\":\"714659882540716424\",\"projectname\":\"恒大绿洲\",\"address\":\"车城西四路79号,银河路118号\",\"areaname\":\"龙泉驿区\",\"areacode\":\"510112\"},{\"id\":\"714659882540748724\",\"projectname\":\"恒大帝景\",\"address\":\"双柏路6号\",\"areaname\":\"高新区\",\"areacode\":\"510120\"},{\"id\":\"714659882540786024\",\"projectname\":\"恒大新城1期\",\"address\":\"凤翔大道1001号\",\"areaname\":\"温江区\",\"areacode\":\"510115\"},{\"id\":\"714659882630140024\",\"projectname\":\"恒大城\",\"address\":\"凤溪大道南段555号\",\"areaname\":\"温江区\",\"areacode\":\"510115\"},{\"id\":\"714659882630195824\",\"projectname\":\"恒大翡翠华庭\",\"address\":\"光华南三路（暂定）\",\"areaname\":\"青羊区\",\"areacode\":\"510105\"},{\"id\":\"714659882650088024\",\"projectname\":\"恒大曹家巷广场\",\"address\":\"马鞍南街9号\",\"areaname\":\"金牛区\",\"areacode\":\"510106\"},{\"id\":\"1814726962410000924\",\"projectname\":\"恒大御景半岛2期\",\"address\":\"滨江路二段\",\"areaname\":\"金堂县\",\"areacode\":\"510121\"},{\"id\":\"1814726962410001824\",\"projectname\":\"恒大御景半岛1期\",\"address\":\"滨江路二段\",\"areaname\":\"金堂县\",\"areacode\":\"510121\"},{\"id\":\"1814726962410003224\",\"projectname\":\"恒大御景半岛5期\",\"address\":\"滨江路二段（毗河二桥旁）\",\"areaname\":\"金堂县\",\"areacode\":\"510121\"},{\"id\":\"1814726962410005624\",\"projectname\":\"恒大御景半岛3期\",\"address\":\"滨江路二段\",\"areaname\":\"金堂县\",\"areacode\":\"510121\"},{\"id\":\"1814726962410010124\",\"projectname\":\"恒大御景半岛\",\"address\":\"滨江路二段\",\"areaname\":\"金堂县\",\"areacode\":\"510121\"},{\"id\":\"1814727102210000324\",\"projectname\":\"恒大雅苑\",\"address\":\"凤凰大道北三段与华金大道三段的十字路口北侧（凤凰湖公园附近）\",\"areaname\":\"青白江区\",\"areacode\":\"510113\"},{\"id\":\"1814727148460000624\",\"projectname\":\"恒大山水城\",\"address\":\"晋原镇凤凰村\",\"areaname\":\"大邑县\",\"areacode\":\"510129\"}],\"PageCount\":1,\"ReturnCode\":1}"
+    ## one openID for 5 times
+
+
+#[查询价格]:
+--HOST:http://wx.htvaluer.com/WeiXin20IF/api/Common/EnquiryPrice
+--HEADERS:
+    Host: wx.htvaluer.com
+    Accept: */*
+    Connection: keep-alive
+    X-Requested-With: XMLHttpRequest
+    Accept-Encoding: gzip, deflate
+    Accept-Language: zh-cn
+    Content-Type: application/json;charset-utf-8
+    Origin: http://wx.htvaluer.com
+    Content-Length: 184
+    Connection: keep-alive
+    User-Agent: Mozilla/5.0 (iPhone; CPU iPhone OS 9_3_2 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Mobile/13F69 MicroMessenger/6.3.31 NetType/WIFI Language/zh_CN
+    Referer: http://wx.htvaluer.com/HouseEnquiry/search/HouseSearchResult.aspx?keyword=%E6%81%92%E5%A4%A7
+--METHOD:POST
+--REQUEST BODY:{"Data":"{\"AreaCode\":\"510105\",\"ProjectId\":\"714659882540303624\",\"Address\":\"光华大道光华南三路88号\",\"BuildArea\":110,\"OpenId\":\"oEpH3jnXAZoNY6fq0DXIp-hK8whk\"}"}
+--RESPONSE EXP:
+    "{\"ReturnCode\":0,\"Remark\":\"-2\"}" ## First time with new openID
+    "{\"CaseId\":\"18501a77-9989-4711-8f6b-1125fa82cbf5\",\"ReturnCode\":1,\"Remark\":\"请求成功\",\"UnitPrice\":\"\",\"TotalPrice\":\"\",\"PriceRange\":\"11615\",\"ProjectName\":null,\"ProjectList\":null,\"PageCount\":0}"
+    ## one openID for 5 times

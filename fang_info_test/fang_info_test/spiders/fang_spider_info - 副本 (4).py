@@ -31,15 +31,49 @@ class fang_info_spider(RedisSpider):
 		item['url'] = ''
 		item['body'] = ''
 		item['version_time'] = int(time.time())
-		item['source_route'] = self.redis_key
+		item['source_route'] = ''
 		return item
+
+
+	def next_requests(self):
+		use_set = self.settings.getbool('REDIS_START_URLS_AS_SET')
+		fetch_one = self.server.spop if use_set else self.server.lpop
+
+		found = 0
+
+		while found < self.redis_batch_size:
+			data = json.loads(fetch_one(self.redis_key))
+			if (not data) or ("source_url" not in data):
+				break
+			item = Fang_Info_Test_Item()
+			item = self._item_init(item)
+			source_route_dict = {}
+			if "source" in data:
+				source_route_dict['source'] = data['source']
+			if "city" in data:
+				source_route_dict['city'] = data['city']
+			if "type" in data:
+				source_route_dict['type'] = data['type']
+			source_route_dict['key_route'] = self.redis_key
+			item['source_route'] = json.dumps(source_route_dict)
+			req = Request(url=data['source_url'],
+							method='GET',
+							callback=self.parse,
+							dont_filter=True)
+			if req:
+				yield req
+				found += 1
+			else:
+				self.logger.debug("Request not made from data: %s", data)
+
+		if found:
+			self.logger.debug("Read %s requests from '%s'", found, self.redis_key)
 
 
 	def parse(self, response):
 
 		sel = Selector(response)
-		item = Fang_Info_Test_Item()
-		item = self._item_init(item)
+		
 		try:
 			fang_info = {'title':'','info':'','desc':'','pic_tab':''}
 			url = item['url'] = response.url
