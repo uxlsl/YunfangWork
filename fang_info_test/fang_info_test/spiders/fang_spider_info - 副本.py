@@ -59,6 +59,7 @@ class fang_info_spider(RedisSpider):
 			if "type" in data:
 				source_route_dict['type'] = data['type'].encode('utf-8')
 			source_route_dict['key_route'] = self.redis_key
+			print source_route_dict
 			item['source_route'] = json.dumps(source_route_dict)
 			req = Request(url=data['source_url'],
 							method='GET',
