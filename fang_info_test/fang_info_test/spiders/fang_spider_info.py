@@ -49,11 +49,11 @@ class fang_info_spider(RedisSpider):
 			item = self._item_init(item)
 			source_route_dict = {}
 			if "source" in data:
-				source_route_dict['source'] = data['source']
+				source_route_dict['source'] = data['source'].encode('utf-8')
 			if "city" in data:
-				source_route_dict['city'] = data['city']
+				source_route_dict['city'] = data['city'].encode('utf-8')
 			if "type" in data:
-				source_route_dict['type'] = data['type']
+				source_route_dict['type'] = data['type'].encode('utf-8')
 			source_route_dict['key_route'] = self.redis_key
 			item['source_route'] = json.dumps(source_route_dict)
 			req = Request(url=data['source_url'],
