@@ -59,7 +59,8 @@ class fang_info_spider(RedisSpider):
 			req = Request(url=data['source_url'],
 							method='GET',
 							callback=self.parse,
-							dont_filter=True)
+							dont_filter=True,
+							meta={"item":item})
 			if req:
 				yield req
 				found += 1
@@ -73,7 +74,7 @@ class fang_info_spider(RedisSpider):
 	def parse(self, response):
 
 		sel = Selector(response)
-		
+		item = response.meta['item']
 		try:
 			fang_info = {'title':'','info':'','desc':'','pic_tab':''}
 			url = item['url'] = response.url
