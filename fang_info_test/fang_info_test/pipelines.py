@@ -28,7 +28,7 @@ class Fang_Info_Test_Pipeline(object):
 		source_route = item['source_route']
 
 		file_path = self.SVN_DATA_PATH
-		file_name = '{0}_{1}_{2}_{3}_{4}.html'.format(host_name,region_code,fang_id,version_time,source_route)
+		file_name = '{0}_{1}_{2}_{3}.html'.format(host_name,region_code,fang_id,version_time)
 
 		try:
 
