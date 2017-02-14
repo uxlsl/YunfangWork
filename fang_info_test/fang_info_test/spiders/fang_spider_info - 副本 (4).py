@@ -60,7 +60,7 @@ class fang_info_spider(RedisSpider):
 				source_route_dict['type'] = data['type'].encode('utf-8')
 			source_route_dict['key_route'] = self.redis_key
 			print source_route_dict
-			item['source_route'] = json.dumps(source_route_dict)
+			item['source_route'] = json.dumps(source_route_dict,ensure_ascii=False)
 			req = Request(url=data['source_url'],
 							method='GET',
 							callback=self.parse,
