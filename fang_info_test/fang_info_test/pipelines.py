@@ -36,7 +36,7 @@ class Fang_Info_Test_Pipeline(object):
 			f.write(body)
 			f.close()
 
-			source_addr = '192.168.6.205'
+			source_addr = '192.168.6.204'
 			source_port = 22
 			user_name = 'chiufung'
 			passwd = 'enzowcf'

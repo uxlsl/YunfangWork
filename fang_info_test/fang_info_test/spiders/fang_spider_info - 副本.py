@@ -6,6 +6,7 @@ from scrapy.contrib.linkextractors.sgml import SgmlLinkExtractor
 from scrapy.http import Request
 from fang_info_test.items import Fang_Info_Test_Item
 from fang_info_test.settings import global_spider
+from fang_info_test.settings import Redis_key
 from scrapy import log,FormRequest
 import re,time,sys,json,MySQLdb,copy,hashlib
 from redis import Redis
@@ -22,7 +23,7 @@ class fang_info_spider(RedisSpider):
 	spider_id = global_spider.get_spider_id()
 	global_spider.spider_id_add()
 	name = "fang_info_spider%s"%spider_id
-	redis_key = 'HouseNew:start_urls'
+	redis_key = Redis_key
 	
 	allowed_domains = ["fang.com"]
 
@@ -42,8 +43,11 @@ class fang_info_spider(RedisSpider):
 		found = 0
 
 		while found < self.redis_batch_size:
-			data = json.loads(fetch_one(self.redis_key))
-			if (not data) or ("source_url" not in data):
+			data_raw = fetch_one(self.redis_key)
+			if not data_raw:
+				break
+			data = json.loads(data_raw)
+			if "source_url" not in data:
 				break
 			item = Fang_Info_Test_Item()
 			item = self._item_init(item)
