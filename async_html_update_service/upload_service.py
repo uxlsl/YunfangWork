@@ -90,7 +90,10 @@ def upload_new_file(self,source_addr,source_port,user_name,passwd,file_path,file
     global file_record_fdfs,celery
     try:
         cur_connection = _get_Connect_from_Pool(source_addr,source_port,user_name,passwd)
-        # init the fdfs upload command
+
+        ###############################
+        # init the fdfs upload command#
+        ###############################
         upload_file_cmd = 'fdfs_upload_file /etc/fdfs/client.conf {file_path}{file_name}'.\
                         format(file_path=file_path,file_name=file_name)
         stdin,stdout,stderr = cur_connection.exec_command(upload_file_cmd)
@@ -106,7 +109,10 @@ def upload_new_file(self,source_addr,source_port,user_name,passwd,file_path,file
             print "[ERROR]",cur_time,":","send back error"
             print Exception,":",e
         return
-    # get the execute result
+
+    #########################
+    # get the execute result#
+    #########################
     if err_message != "":
         cur_time = str(time.strftime("%Y-%m-%d %H:%M:%S",time.localtime()))
         if "No such file or directory" in err_message:
@@ -123,7 +129,10 @@ def upload_new_file(self,source_addr,source_port,user_name,passwd,file_path,file
                 print "[ERROR]",cur_time,":","send back error"
                 print Exception,":",e
             return
-    # upload fail and send task back to the queue
+
+    #####################################################################
+    # upload sucess then remove it from local disk and insert the record#
+    #####################################################################
     else:
         cur_time = str(time.strftime("%Y-%m-%d %H:%M:%S",time.localtime()))
         i = file_record_fdfs.insert()
@@ -142,6 +151,10 @@ def upload_new_file(self,source_addr,source_port,user_name,passwd,file_path,file
             stdin,stdout,stderr = cur_connection.exec_command(delete_file_cmd)
             out_message = stdout.readline()
             err_message = stderr.readline()
+
+            ##############################################        
+            # remove fail and send task back to the queue#
+            ##############################################
             if err_message != "":
                 cur_time = str(time.strftime("%Y-%m-%d %H:%M:%S",time.localtime()))
                 if "No such file or directory" in err_message:
@@ -151,18 +164,21 @@ def upload_new_file(self,source_addr,source_port,user_name,passwd,file_path,file
                     print "[ERROR]",cur_time,":",err_message
                     print "[RETRY]",cur_time
                     try:
+                        ##############################################################
+                        # roll back the task, try to remove the file from the Fastdfs#
+                        ##############################################################
                         print "[ROLL BACK]",cur_time
                         delete_upload_file_cmd = 'fdfs_delete_file /etc/fdfs/client.conf {file_store_id}'.\
                                 format(file_store_id=file_store_id)
                         stdin,stdout,stderr = cur_connection.exec_command(delete_upload_file_cmd)
                         if stderr == "":
+                            celery.send_task("async_html_update_service.upload_service.upload_new_file",
+                                    args=[source_addr,source_port,user_name,passwd,file_path,file_name,version_time,source_route],
+                                    queue='upload_queue')
                             print "[ROLL BACK SUCCESS]",cur_time
                         else:
                             print "[Warning]",cur_time,":",err_message
                             return
-                        celery.send_task("async_html_update_service.upload_service.upload_new_file",
-                                args=[source_addr,source_port,user_name,passwd,file_path,file_name,version_time,source_route],
-                                queue='upload_queue')
                     except Exception as e:
                         print "[ERROR]",cur_time,":","send back error"
                         print Exception,":",e
@@ -172,18 +188,21 @@ def upload_new_file(self,source_addr,source_port,user_name,passwd,file_path,file
         except Exception as e:
             try:
                 print Exception,":",e
+                ##############################################################
+                # roll back the task, try to remove the file from the Fastdfs#
+                ##############################################################
                 print "[ROLL BACK]",cur_time
                 delete_upload_file_cmd = 'fdfs_delete_file /etc/fdfs/client.conf {file_store_id}'.\
                         format(file_store_id=file_store_id)
                 stdin,stdout,stderr = cur_connection.exec_command(delete_upload_file_cmd)
                 if stderr == "":
+                    celery.send_task("async_html_update_service.upload_service.upload_new_file",
+                            args=[source_addr,source_port,user_name,passwd,file_path,file_name,version_time,source_route],
+                            queue='upload_queue')
                     print "[ROLL BACK SUCCESS]",cur_time
                 else:
                     print "[Warning]",cur_time,":",err_message
                     return
-                celery.send_task("async_html_update_service.upload_service.upload_new_file",
-                        args=[source_addr,source_port,user_name,passwd,file_path,file_name,version_time,source_route],
-                        queue='upload_queue')
             except Exception as e:
                 print "[ERROR]",cur_time,":","send back error"
                 print Exception,":",e
