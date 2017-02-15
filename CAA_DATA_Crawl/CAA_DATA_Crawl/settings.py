@@ -99,8 +99,8 @@ EXTENSIONS = {
 COOKIES_ENABLED = False
 COOKIES_DEBUG = False
 
-DOWNLOAD_DELAY = 0.75
-DOWNLOAD_TIMEOUT = 50
+DOWNLOAD_DELAY = 0.1
+DOWNLOAD_TIMEOUT = 20
 RANDOMIZE_DOWNLOAD_DELAY = True
 
 #LOG_LEVEL = 'INFO'
@@ -112,7 +112,10 @@ USER_AGENTS = [
   "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Win64; x64; Trident/5.0; .NET CLR 2.0.50727; SLCC2; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; InfoPath.3; .NET4.0C; Tablet PC 2.0; .NET4.0E)"]
 
 
-#REDIS_URL = 'redis://192.168.10.48:6379'
+REDIS_HOST = '192.168.6.4'
+REDIS_PORT = 6379
+
+REDIS_START_URLS_AS_SET = True
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See http://doc.scrapy.org/en/latest/topics/autothrottle.html

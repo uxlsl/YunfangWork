@@ -15,13 +15,13 @@ server_address_col_inex = 4
 user_name = 'sa'
 passwd = 'gh001'
 port = '1433'
-data_source_path = '/home/chiufung/xxjr_info/source_info/info_data.xlsx'
-push_key = 'xxjr:seed_info'
-r = Redis(host='192.168.6.10')
+data_source_path = '/home/chiufung/YunfangWork/CAA_DATA_Crawl/setup_data/info_data.xlsx'
+push_key = 'CAA_Search:seed'
+r = Redis(host='192.168.6.4')
 
 wb = load_workbook(filename=data_source_path)
 
-for sheet_name in wb.get_sheet_names():
+for sheet_name in ['CAA',]:
     print sheet_name
     ws = wb.get_sheet_by_name(sheet_name)
     nrows = ws.max_row
