@@ -33,7 +33,7 @@ def log_in_mysql(url,status):
     try:
         i = fang_bj_log.insert()
         cur_time = time.strftime("%Y-%m-%d %H:%M:%S",time.localtime())
-        cur_i = i.value(create_time=cur_time,
+        cur_i = i.values(create_time=cur_time,
                     url=url,
                     status=status)
         conn.execute(cur_i)
