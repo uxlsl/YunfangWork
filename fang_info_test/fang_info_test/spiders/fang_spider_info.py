@@ -82,7 +82,7 @@ class fang_info_spider(RedisSpider):
 
     def request_dropped(self, request, spider):
         log_mysql.log_in_mysql(request.url,'dropped')
-        logger.debug(
+        self.logger.debug(
                 "Ignoring request %(request)r: Dropped",
                 {'request': request}
             )

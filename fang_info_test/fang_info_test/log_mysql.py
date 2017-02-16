@@ -5,6 +5,8 @@ import time
 from sqlalchemy import *
 from sqlalchemy.orm import *
 
+logger = logging.getLogger(__name__)
+
 def log_in_mysql(url,status):
 
     mysql_path = "mysql+pymysql://root:@192.168.6.8:3306/scrapy_data?charset=utf8"

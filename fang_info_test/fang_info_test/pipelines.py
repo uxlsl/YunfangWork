@@ -1,3 +1,4 @@
+import logging
 import json
 import codecs
 import MySQLdb
@@ -6,6 +7,8 @@ import time
 import fang_info_test.log_mysql as log_mysql
 
 from celery import Celery
+
+logger = logging.getLogger(__name__)
 
 #************iniitialize insert option****************#
 
