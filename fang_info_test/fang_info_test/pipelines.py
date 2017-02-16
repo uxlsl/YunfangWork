@@ -46,7 +46,7 @@ class Fang_Info_Test_Pipeline(object):
             self.celery.send_task("async_html_update_service.upload_service.upload_new_file",
                     args=[source_addr,source_port,user_name,passwd,file_path,file_name,version_time,source_route],
                     queue='upload_queue')
-            log_mysql.log_in_mysql(response.url,'Crawl success')
+            log_mysql.log_in_mysql(url,'Crawl success')
             logger.debug('Crawl success')
         except Exception as e:
             print Exception,":",e
