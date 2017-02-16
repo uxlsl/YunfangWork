@@ -3,6 +3,7 @@ import codecs
 import MySQLdb
 #import pysvn
 import time
+import fang_info_test.log_mysql as log_mysql
 
 from celery import Celery
 
@@ -22,7 +23,7 @@ class Fang_Info_Test_Pipeline(object):
 		host_name = 'fang'
 		url = item['url']
 		fang_id = item['fang_id']
-		region_code = str(010)
+		region_code = '010'
 		body = item['body']
 		version_time = item['version_time']
 		source_route = item['source_route']
@@ -45,6 +46,8 @@ class Fang_Info_Test_Pipeline(object):
 			self.celery.send_task("async_html_update_service.upload_service.upload_new_file",
                     args=[source_addr,source_port,user_name,passwd,file_path,file_name,version_time,source_route],
                     queue='upload_queue')
+			log_mysql.log_in_mysql(response.url,'Crawl success')
+            logger.debug('Crawl success')
 		except Exception as e:
 			print Exception,":",e
 

@@ -14,6 +14,7 @@ from scrapy.http.cookies import CookieJar
 from scrapy_redis.spiders import RedisSpider
 from scrapy import signals
 from scrapy.exceptions import DontCloseSpider
+import fang_info_test.log_mysql as log_mysql
 reload(sys)
 sys.setdefaultencoding( "utf-8" )
 
@@ -26,6 +27,62 @@ class fang_info_spider(RedisSpider):
 	redis_key = Redis_key
 	
 	allowed_domains = ["fang.com"]
+
+	def setup_redis(self, crawler=None):
+        """Setup redis connection and idle signal.
+
+        This should be called after the spider has set its crawler object.
+        """
+        if self.server is not None:
+            return
+
+        if crawler is None:
+            # We allow optional crawler argument to keep backwards
+            # compatibility.
+            # XXX: Raise a deprecation warning.
+            crawler = getattr(self, 'crawler', None)
+
+        if crawler is None:
+            raise ValueError("crawler is required")
+
+        settings = crawler.settings
+
+        if self.redis_key is None:
+            self.redis_key = settings.get(
+                'REDIS_START_URLS_KEY', DEFAULT_START_URLS_KEY,
+            )
+
+        self.redis_key = self.redis_key % {'name': self.name}
+
+        if not self.redis_key.strip():
+            raise ValueError("redis_key must not be empty")
+
+        if self.redis_batch_size is None:
+            self.redis_batch_size = settings.getint(
+                'REDIS_START_URLS_BATCH_SIZE', DEFAULT_START_URLS_BATCH_SIZE,
+            )
+
+        try:
+            self.redis_batch_size = int(self.redis_batch_size)
+        except (TypeError, ValueError):
+            raise ValueError("redis_batch_size must be an integer")
+
+        self.logger.info("Reading start URLs from redis key '%(redis_key)s' "
+                         "(batch size: %(redis_batch_size)s)", self.__dict__)
+
+        self.server = connection.from_settings(crawler.settings)
+        # The idle signal is called when the spider has no requests left,
+        # that's when we will schedule new requests from redis queue
+        crawler.signals.connect(self.spider_idle, signal=signals.spider_idle)
+        crawler.signals.connect(self.request_dropped, signal=signals.request_dropped)
+
+
+    def request_dropped(self, request, spider):
+    	log_mysql.log_in_mysql(response.url,'dropped')
+        logger.debug(
+                "Ignoring request %(response)r: Dropped",
+                {'response': response}
+            )
 
 	def _item_init(self,item):
 		item['fang_id'] = ''
