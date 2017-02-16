@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Scrapy settings for CAA_DATA_Crawl project
+# Scrapy settings for xxjr_info project
 #
 # For simplicity, this file contains only settings considered important or
 # commonly used. You can find more settings consulting the documentation:
@@ -8,28 +8,26 @@
 #     http://doc.scrapy.org/en/latest/topics/settings.html
 #     http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 #     http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
-
-import CAA_DATA_Crawl.globalvar as Globalvar
+import xxjr_info.globalvar as Globalvar
 
 global_spider = Globalvar.GlobalVar()
 
-BOT_NAME = 'CAA_DATA_Crawl'
+BOT_NAME = 'xxjr_info'
 
-SPIDER_MODULES = ['CAA_DATA_Crawl.spiders']
-NEWSPIDER_MODULE = 'CAA_DATA_Crawl.spiders'
-COMMANDS_MODULE = 'CAA_DATA_Crawl.commands'
+SPIDER_MODULES = ['xxjr_info.spiders']
+NEWSPIDER_MODULE = 'xxjr_info.spiders'
+COMMANDS_MODULE = 'xxjr_info.commands'
+
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'CAA_DATA_Crawl (+http://www.yourdomain.com)'
+#USER_AGENT = 'xxjr_info (+http://www.yourdomain.com)'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-CONCURRENT_REQUESTS = 16
-
-REACTOR_THREADPOOL_MAXSIZE = 16
+CONCURRENT_REQUESTS = 6
 
 # Configure a delay for requests for the same website (default: 0)
 # See http://scrapy.readthedocs.org/en/latest/topics/settings.html#download-delay
@@ -46,76 +44,81 @@ REACTOR_THREADPOOL_MAXSIZE = 16
 #TELNETCONSOLE_ENABLED = False
 
 # Override the default request headers:
-DEFAULT_REQUEST_HEADERS = {
-    'Host': 'wx.htvaluer.com',
-    'Accept': '*/*',
-    'Connection': 'keep-alive',
-    'X-Requested-With': 'XMLHttpRequest',
-    'Accept-Encoding': 'gzip, deflate',
-    'Accept-Language': 'zh-cn',
-    'Content-Type': 'application/json;charset-utf-8',
-    'Origin': 'http://wx.htvaluer.com',
-    'Connection': 'keep-alive',
-    'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 9_3_2 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Mobile/13F69 MicroMessenger/6.3.31 NetType/WIFI Language/zh_CN'
+DEFAULT_REQUEST_HEADERS = { 'Host': 'phone.xxjr.com',
+'Accept': 'application/json, text/javascript, */*; q=0.01',
+'Proxy-Connection': 'keep-alive',
+'X-Requested-With': 'XMLHttpRequest',
+'Accept-Encoding': 'gzip, deflate',
+'Accept-Language': 'zh-cn',
+'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+'Origin': 'https://phone.xxjr.com',
+'Connection': 'keep-alive',
+'Referer': 'https://phone.xxjr.com/cpQuery/app/xxjrEval/houseEval',
+'Cookie': 'JSESSIONID=E8CACAF25ABFB2645FC09854D6CD4AD6'}
+
+DOWNLOADER_MIDDLEWARES = {
+    'xxjr_info.middlewares.RandomUserAgent': 1,
+    'scrapy.contrib.downloadermiddleware.httpproxy.HttpProxyMiddleware': 110,
+    'xxjr_info.middlewares.ProxyMiddleware': 100,
+    'scrapy.contrib.downloadermiddleware.cookies.CookiesMiddleware':130,
+    'scrapy.contrib.downloadermiddleware.retry.RetryMiddleware':120,
 }
+
+
 
 # Enable or disable spider middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
 #SPIDER_MIDDLEWARES = {
-#    'CAA_DATA_Crawl.middlewares.CaaDataCrawlSpiderMiddleware': 543,
+#    'xxjr_info.middlewares.MyCustomSpiderMiddleware': 543,
 #}
 
 # Enable or disable downloader middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
-
-DOWNLOADER_MIDDLEWARES = {
-    'CAA_DATA_Crawl.middlewares.RandomUserAgent': 1,
-    'scrapy.contrib.downloadermiddleware.httpproxy.HttpProxyMiddleware': 110,
-    'CAA_DATA_Crawl.middlewares.ProxyMiddleware': 100,
-    #'scrapy.contrib.downloadermiddleware.cookies.CookiesMiddleware':130,
-    'scrapy.contrib.downloadermiddleware.retry.RetryMiddleware':120,
-}
+#DOWNLOADER_MIDDLEWARES = {
+#    'xxjr_info.middlewares.MyCustomDownloaderMiddleware': 543,
+#}
 
 # Enable or disable extensions
 # See http://scrapy.readthedocs.org/en/latest/topics/extensions.html
+#EXTENSIONS = {
+#    'scrapy.extensions.telnet.TelnetConsole': None,
+#}
 
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'CAA_DATA_Crawl.pipelines.CaaDataCrawlPipeline': 300,
+    'xxjr_info.pipelines.XxjrInfoPipeline': 300,
 }
 
 RETRY_ENABLED = True
-RETRY_TIMES = 10
+RETRY_TIMES = 6
 RETRY_HTTP_CODES = [500,403,501,502,503,504,400,408,404,411,413,302,407]
 
 
-REDIRECT_ENABLED = False
+#REDIRECT_ENABLED = False
 
 EXTENSIONS = {
-   #'scrapy.telnet.TelnetConsole': None,
+   'scrapy.telnet.TelnetConsole': None,
+   'xxjr_info.latencies.Latencies':None,
 }
 
-COOKIES_ENABLED = False
-COOKIES_DEBUG = False
+REDIS_START_URLS_AS_SET = True
 
-DOWNLOAD_DELAY = 0.1
-DOWNLOAD_TIMEOUT = 20
+COOKIES_ENABLED = False
+COOKIES_DEBUG = True
+
+DOWNLOAD_DELAY = 0.11
+DOWNLOAD_TIMEOUT = 25
 RANDOMIZE_DOWNLOAD_DELAY = True
 
 #LOG_LEVEL = 'INFO'
 
 USER_AGENTS = [
-  "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.122 Safari/537.36",
-  "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101 Firefox/38.0",
-  "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534.50 (KHTML, like Gecko) Version/5.1 Safari/534.50",
-  "Mozilla/5.0 (compatible; MSIE 9.0; Windows NT 6.1; Win64; x64; Trident/5.0; .NET CLR 2.0.50727; SLCC2; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0; InfoPath.3; .NET4.0C; Tablet PC 2.0; .NET4.0E)"]
+  "Mozilla/5.0 (iPhone; CPU iPhone OS 9_3_2 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Mobile/13F69 MicroMessenger/6.3.31 NetType/WIFI Language/zh_CN",]
 
+REDIS_HOST = '192.168.6.10'
 
-REDIS_HOST = '192.168.6.4'
 REDIS_PORT = 6379
-
-REDIS_START_URLS_AS_SET = True
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See http://doc.scrapy.org/en/latest/topics/autothrottle.html
