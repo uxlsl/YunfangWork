@@ -13,6 +13,7 @@ def log_in_mysql(url,status):
     mysql_path = "mysql+pymysql://root:@192.168.6.8:3306/scrapy_data?charset=utf8"
     engine=create_engine(mysql_path,echo=False)
     metadata=MetaData(engine)
+    conn=engine.connect()
 
     try:
         fang_bj_log = Table('fang_bj_log',metadata,autoload=True)
@@ -32,8 +33,9 @@ def log_in_mysql(url,status):
     try:
         i = fang_bj_log.insert()
         cur_time = time.strftime("%Y-%m-%d %H:%M:%S",time.localtime())
-        i.execute(create_time=cur_time,
+        cur_i = i.value(create_time=cur_time,
                     url=url,
                     status=status)
+        conn.execute(cur_i)
     except Exception as e:
         logger.debug("%(Exception)r : %(e)r",{'Exception':Exception,'e':e})
