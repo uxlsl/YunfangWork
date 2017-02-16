@@ -26,6 +26,7 @@ class HttpErrorMiddleware(object):
         return cls(crawler.settings)
 
     def __init__(self, settings):
+        print "#########hahahahahahah##############"
         self.handle_httpstatus_all = settings.getbool('HTTPERROR_ALLOW_ALL')
         self.handle_httpstatus_list = settings.getlist('HTTPERROR_ALLOWED_CODES')
 
@@ -42,6 +43,7 @@ class HttpErrorMiddleware(object):
         else:
             allowed_statuses = getattr(spider, 'handle_httpstatus_list', self.handle_httpstatus_list)
         if response.status in allowed_statuses:
+            print "#########hahahahahahah##############"
             log_mysql.log_in_mysql(response.url,'get 404')
             logger.debug(
                 "Ignoring response %(response)r: HTTP status code 404",
