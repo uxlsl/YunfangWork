@@ -18,6 +18,8 @@ import fang_info_test.log_mysql as log_mysql
 reload(sys)
 sys.setdefaultencoding( "utf-8" )
 
+DEFAULT_START_URLS_BATCH_SIZE = 16
+DEFAULT_START_URLS_KEY = '%(name)s:start_urls'
 
 class fang_info_spider(RedisSpider):
     
