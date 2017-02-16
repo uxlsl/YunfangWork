@@ -8,7 +8,7 @@ from sqlalchemy.orm import *
 def log_in_mysql(url,status):
 
     mysql_path = "mysql+pymysql://root:@192.168.6.8:3306/scrapy_data?charset=utf8"
-    engine=create_engine(_mysql_path,echo=False)
+    engine=create_engine(mysql_path,echo=False)
     metadata=MetaData(engine)
 
     try:
