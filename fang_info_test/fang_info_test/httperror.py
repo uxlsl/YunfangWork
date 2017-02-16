@@ -47,7 +47,7 @@ class HttpErrorMiddleware(object):
                 "Ignoring response %(response)r: HTTP status code 404",
                 {'response': response}, extra={'spider': spider},
             )
-            return
+            raise HttpError(response, 'Ignoring non-200 response')
         raise HttpError(response, 'Ignoring non-200 response')
 
     def process_spider_exception(self, response, exception, spider):
