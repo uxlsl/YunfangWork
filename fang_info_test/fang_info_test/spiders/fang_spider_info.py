@@ -12,6 +12,7 @@ import re,time,sys,json,MySQLdb,copy,hashlib
 from redis import Redis
 from scrapy.http.cookies import CookieJar
 from scrapy_redis.spiders import RedisSpider
+from scrapy_redis import connection
 from scrapy import signals
 from scrapy.exceptions import DontCloseSpider
 import fang_info_test.log_mysql as log_mysql
