@@ -2,6 +2,7 @@
 
 import logging
 import time
+import sqlalchemy
 from sqlalchemy import *
 from sqlalchemy.orm import *
 
