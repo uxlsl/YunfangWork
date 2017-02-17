@@ -63,9 +63,9 @@ CONCURRENT_REQUESTS = 16
 
 # Enable or disable spider middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
-#SPIDER_MIDDLEWARES = {
-#    'anjuke.middlewares.MyCustomSpiderMiddleware': 543,
-#}
+SPIDER_MIDDLEWARES = {
+    'fang_info_test.httperror.HttpErrorMiddleware': 543,
+}
 
 # Enable or disable downloader middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
@@ -86,9 +86,9 @@ ITEM_PIPELINES = {
 }
 
 RETRY_ENABLED = True
-RETRY_TIMES = 5
+RETRY_TIMES = 1
 RETRY_HTTP_CODES = [500,403,501,502,503,504,400,408,411,413,302,407]
-
+HTTPERROR_ALLOWED_CODES = [404,]
 
 REDIRECT_ENABLED = False
 
@@ -101,8 +101,8 @@ TELNETCONSOLE_HOST = '0.0.0.0'
 COOKIES_ENABLED = False
 COOKIES_DEBUG = False
 
-DOWNLOAD_DELAY = 0.2
-DOWNLOAD_TIMEOUT = 15
+DOWNLOAD_DELAY = 0.1
+DOWNLOAD_TIMEOUT = 45
 RANDOMIZE_DOWNLOAD_DELAY = True
 
 LOG_LEVEL = 'INFO'
