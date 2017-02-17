@@ -70,8 +70,8 @@ DEFAULT_REQUEST_HEADERS = {
 
 DOWNLOADER_MIDDLEWARES = {
     'CAA_DATA_Crawl.middlewares.RandomUserAgent': 1,
-    'scrapy.contrib.downloadermiddleware.httpproxy.HttpProxyMiddleware': 110,
-    'CAA_DATA_Crawl.middlewares.ProxyMiddleware': 100,
+    #'scrapy.contrib.downloadermiddleware.httpproxy.HttpProxyMiddleware': 110,
+    #'CAA_DATA_Crawl.middlewares.ProxyMiddleware': 100,
     #'scrapy.contrib.downloadermiddleware.cookies.CookiesMiddleware':130,
     'scrapy.contrib.downloadermiddleware.retry.RetryMiddleware':120,
 }
@@ -99,7 +99,7 @@ EXTENSIONS = {
 COOKIES_ENABLED = False
 COOKIES_DEBUG = False
 
-DOWNLOAD_DELAY = 0.1
+DOWNLOAD_DELAY = 0.2
 DOWNLOAD_TIMEOUT = 20
 RANDOMIZE_DOWNLOAD_DELAY = True
 

@@ -24,6 +24,6 @@ class RandomUserAgent(object):
 class ProxyMiddleware(object):
   def process_request(self, request, spider):
     r = Redis(host='192.168.6.4',port=6379)
-    proxy = r.srandmmber("GZYF_Test:Proxy_Pool",1)
+    proxy = r.srandmember("GZYF_Test:Proxy_Pool",1)
     #print "**************ProxyMiddleware no pass************   %s"%(proxy)
     request.meta['proxy'] = "http://%s" % (proxy)

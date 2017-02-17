@@ -49,8 +49,8 @@ class CaaSpiderSpider(RedisSpider):
         openid_new = ''
         for i in xrange(28):
             new_char = random.choice(random_field)
-            openid_new.append(new_char)
-        if len(new_char) == 28:
+            openid_new += new_char
+        if len(openid_new) == 28:
             return openid_new
         else:
             return
@@ -109,31 +109,45 @@ class CaaSpiderSpider(RedisSpider):
 
     def _make_request_from_keyword(self,data_dict):
 
-        url = 'http://wx.htvaluer.com/WeiXin201F/api/Common/SelectProject'
+        url = 'http://wx.htvaluer.com/WeiXin20IF/api/Common/SelectProject'
         cityName = data_dict['cityName']
         keyWord = data_dict['keyWord']
         cityTran = self._get_cityID(cityName)
         OpenId_cur = self._random_openid_factory()
         if cityTran:
-            item = XxjrInfoItem()
+            item = CaaDataCrawlItem()
             item = self._item_init(item)
-            item['City_Name'], = cityName
-            city_id = item['City_id'] = cityTran
-            re_body = {"Data":
-                        {"TypeCode":4,
-                         "AreaCode":city_id,
-                         "Address":keyWord,
-                         "PageIndex":1,
-                         "PageSize":20,
-                         "OpenId":OpenId_cur}}
-            print re_body
+            item['City_Name'] = cityName
+            city_id = cityTran
+            re_body_data = {"TypeCode":4,
+                             "AreaCode":city_id,
+                             "Address":keyWord,
+                             "PageIndex":1,
+                             "PageSize":20,
+                             "OpenId":OpenId_cur}
+            re_body = {"Data":json.dumps(re_body_data)}
             return  self.CaaSpiderFormRequest(url=url,
                             headers=self.headers,method='POST',dont_filter=True,
-                            formdata=re_body,
-                            meta = {'item' : item,'city_id':city_id}, 
+                            formdata=json.dumps(re_body),
+                            meta = {'item' : item,'city_id':city_id,'openid':OpenId_cur}, 
                             callback = self.parse_item)
         else:
             return
 
     def parse_item(self, response):
-        print response.body
+
+        item = coy.deepcopy(response.meta['item'])
+        cur_openid = response.meta['openid']
+        cur_city_id = response.meta['city_id']
+
+        try:
+            response_dict = json.loads(response.body)
+        except Exception as e:
+            print Exception,":",e
+            return
+
+        if response_dict['Remark'] == "-2":
+            print 'Success register the new OpenID.'
+
+        if 
+        
