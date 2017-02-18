@@ -14,6 +14,7 @@ class CaaDataCrawlPipeline(object):
     _mysql_path = "mysql+pymysql://root:@192.168.6.8:3306/scrapy_data?charset=utf8"
     engine=create_engine(_mysql_path,echo=False)
     metadata=MetaData(engine)
+    conn = engine.connect()
 
 
     def __init__(self):
@@ -37,13 +38,14 @@ class CaaDataCrawlPipeline(object):
     def process_item(self, item, spider):
         i = self.fang_bj_test.insert()
         try:
-            i.execute(Project_ID=item['Project_ID'],
+            cur_i = i.values(Project_ID=item['Project_ID'],
                         Project_Name=item['Project_Name'],
                         City_Name=itm['City_Name'],
                         Area_Name=item['Area_Name'],
                         Area_Code=item['Area_Code'],
                         Address=item['Address'],
                         Price_Avg=item['Price_Avg'])
+            conn.execute(cur_i)
         except Exception as e:
             print Exception,":",e
         
