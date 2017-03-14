@@ -125,19 +125,20 @@ class CaaSpiderSpider(RedisSpider):
                              "PageIndex":1,
                              "PageSize":20,
                              "OpenId":OpenId_cur}
-            re_body = {"Data":json.dumps(re_body_data)}
+
             return  self.CaaSpiderFormRequest(url=url,
                             headers=self.headers,method='POST',dont_filter=True,
-                            formdata=json.dumps(re_body),
-                            meta = {'item' : item,'city_id':city_id,'openid':OpenId_cur}, 
+                            formdata=json.dumps({"data":json.dumps(re_body_data)}),
+                            meta = {'item' : item,'city_id':city_id,'request_body_data':re_body_data}, 
                             callback = self.parse_item)
         else:
             return
 
     def parse_item(self, response):
 
+        url = response.url
         item = coy.deepcopy(response.meta['item'])
-        cur_openid = response.meta['openid']
+        cur_re_body_data = response.meta['request_body_data']
         cur_city_id = response.meta['city_id']
 
         try:
@@ -146,8 +147,94 @@ class CaaSpiderSpider(RedisSpider):
             print Exception,":",e
             return
 
-        if response_dict['Remark'] == "-2":
-            print 'Success register the new OpenID.'
+        if 'Remark' in response_dict:
+            if response_dict['Remark'] == "-2":
+                print 'Success register the new OpenID.'
+                yield self.CaaSpiderFormRequest(url=url,
+                                headers=self.headers,method='POST',dont_filter=True,
+                                formdata=json.dumps({"data":json.dumps(cur_re_body_data)}),
+                                meta = {'item' : item,'city_id':cur_city_id,'request_body_data':cur_re_body_data}, 
+                                callback = self.parse_item)
 
-        if 
+            if response_dict['Remark'] == '':
+                print 'Need to change another OpenID'
+                cur_re_body_data["OpenID"] = self._random_openid_factory()
+                yield self.CaaSpiderFormRequest(url=url,
+                                headers=self.headers,method='POST',dont_filter=True,
+                                formdata=json.dumps({"data":json.dumps(cur_re_body_data)}),
+                                meta = {'item' : item,'city_id':cur_city_id,'request_body_data':cur_re_body_data}, 
+                                callback = self.parse_item)
         
+        if 'ProjectList' in response_dict:
+            ProjectList = response_dict['ProjectList']
+            for Project in ProjectList:
+                try:
+                    re_body_data = {}
+                    next_url = 'http://wx.htvaluer.com/WeiXin20IF/api/Common/EnquiryPrice'
+                    item['Project_ID'] = ProjectID = Project['id']
+                    item['Project_Name'] = ProjectName = Project['projectname']
+                    item['Area_Code'] = AreaCode = Project['areacode']
+                    item['Area_Name'] = AreaName = Project['areaname']
+                    item['Address'] = Address = Project['address']
+                    re_body_data['AreaCode'] = AreaCode
+                    re_body_data['ProjectId'] = ProjectId
+                    re_body_data['Address'] = Address
+                    re_body_data['BuildArea'] = '110'
+                    re_body_data['OpenId'] = self._random_openid_factory()
+                    yield self.CaaSpiderFormRequest(url=next_url,
+                                headers=self.headers,method='POST',dont_filter=True,
+                                formdata=json.dumps({"data":json.dumps(re_body_data)}),
+                                meta = {'item' : item,'request_body_data':re_body_data}, 
+                                callback = self.parse_price)
+                except Exception as e:
+                    print Exception,":",e
+                    return
+
+            else:
+                print "Do Nothing"
+                return
+
+    def parse_price(self):
+
+        url = response.url
+        item = coy.deepcopy(response.meta['item'])
+        cur_re_body_data = response.meta['request_body_data']
+
+        try:
+            response_dict = json.loads(response.body)
+        except Exception as e:
+            print Exception,":",e
+            return
+
+        if 'Remark' in response_dict:
+            if response_dict['Remark'] == "-2":
+                print 'Success register the new OpenID.'
+                yield self.CaaSpiderFormRequest(url=url,
+                                headers=self.headers,method='POST',dont_filter=True,
+                                formdata=json.dumps({"data":json.dumps(cur_re_body_data)}),
+                                meta = {'item' : item,'request_body_data':cur_re_body_data}, 
+                                callback = self.parse_price)
+
+            if response_dict['Remark'] == '':
+                print 'Need to change another OpenID'
+                cur_re_body_data["OpenID"] = self._random_openid_factory()
+                yield self.CaaSpiderFormRequest(url=url,
+                                headers=self.headers,method='POST',dont_filter=True,
+                                formdata=json.dumps({"data":json.dumps(cur_re_body_data)}),
+                                meta = {'item' : item,'request_body_data':cur_re_body_data}, 
+                                callback = self.parse_price)
+
+        if 'ReturnCode' in response_dict and 'PriceRange' in response_dict:
+            if response_dict['ReturnCode'] = '1':
+                item['Price_Avg'] = response_dict['PriceRange']
+                yield item
+            else:
+                print "Asking price ReturnCode is not 1"
+                return
+        else:
+            print "ReturnCode or PriceRange is not in response"
+            print "The response body is :"
+            print response.body
+            return
+
+
