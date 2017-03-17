@@ -15,6 +15,7 @@ class mssql_DB_instance(object):
         self.__mssql_path = self.__mssql_format.format(dbUserName=dbUserName, dbPasswd=dbPasswd, dbAddress=dbAddress,
                                                     dbPort=dbPort)
         self.engine = create_engine(self.__mssql_path, echo=False)
+        self.metadate = MetaData(self.engine)
         self.__conn = self.engine.connect()
         self.__conn.execution_options(autocommit=True)
 
@@ -50,6 +51,7 @@ class mysql_DB_instance(object):
         self.__mysql_path = self.__mysql_format.format(dbUserName=dbUserName, dbPasswd=dbPasswd, dbAddress=dbAddress,
                                                     dbPort=dbPort, dbName=dbName, charset=charset)
         self.engine = create_engine(self.__mysql_path, echo=False)
+        self.metadate = MetaData(self.engine)
         self.__conn = self.engine.connect()
         self.__conn.execution_options(autocommit=True)
 

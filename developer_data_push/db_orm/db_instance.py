@@ -1,28 +1,50 @@
 #coding=utf-8
 
+# it need Sql server native client for linux #
+# pymssql not support unicode #
+
 import __builtin__
+import sys
 import db_mapper
 from sqlalchemy import *
 from sqlalchemy.orm import *
 from sqlalchemy.ext.declarative import declarative_base
+
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 
 class mssql_DB_instance(object):
     def __init__(self,
                     dbUserName, dbPasswd, dbAddress, dbPort=1433, dbName=None, charset='utf8',
                     *args, **kwarg):
-        self.__mssql_format = "mssql+pymssql://{dbUserName}:{dbPasswd}@{dbAddress}:{dbPort}/{dbName}?charset={charset}"
+        self.tab_list = {}
+        self.db_name = dbName
+        self.__mssql_format = "mssql+pyodbc://{dbUserName}:{dbPasswd}@{dbAddress}:{dbPort}/{dbName}?driver=SQL+Server+Native+Client+11.0"
         self.__mssql_path = self.__mssql_format.format(dbUserName=dbUserName, dbPasswd=dbPasswd, dbAddress=dbAddress,
-                                                    dbPort=dbPort, dbName=dbName, charset=charset)
+                                                    dbPort=dbPort, dbName=dbName)
         self.engine = create_engine(self.__mssql_path, echo=False)
         self.metadata = MetaData(self.engine)
         self.__Base = declarative_base(metadata=self.metadata)
         self.__Base.metadata.reflect(self.engine)
         for table_name in self.__Base.metadata.tables:
-            setattr(self,
-                    table_name, __builtin__.type(str(table_name),
-                                                    (self.__Base,),
-                                                        {'__table__':self.__Base.metadata.tables[table_name]}))
+            print dbName,table_name
+            try:
+                setattr(self,
+                        table_name, __builtin__.type(str(table_name),
+                                                        (self.__Base,),
+                                                            {'__table__':self.__Base.metadata.tables[table_name]}))
+                self.tab_list[table_name] = (getattr(self,table_name))
+            except Exception as e:
+                print Exception,":",e
+                if 'could not assemble any primary key' in e.message:
+                    setattr(self,
+                            table_name, __builtin__.type(str(table_name),
+                                                            (self.__Base,),
+                                                                {'__table__':self.__Base.metadata.tables[table_name],
+                                                                '__mapper_args__':{'primary_key':[self.__Base.metadata.tables[table_name].c.Id,]}}))
+                    self.tab_list[table_name] = (getattr(self,table_name))  
+                print "add primary key id"    
         self.__Session = sessionmaker(bind=self.engine)
         self.__session = self.__Session()
 
@@ -43,6 +65,7 @@ class mssql_DB_instance(object):
                                             '__table__':cur_table
                                         }
                         ))
+            self.tab_list[table_name] = (getattr(self,table_name))
         except Exception as e:
             print Exception,":",e
         finally:
@@ -70,28 +93,36 @@ class mysql_DB_instance(object):
     def __init__(self,
                     dbUserName, dbPasswd, dbAddress, dbPort=3306, dbName=None, charset='utf8',
                     *args, **kwarg):
+        self.tab_list = {}
+        self.db_name = dbName
         self.__type_map = db_mapper.type_map
         self.__mysql_format = "mysql+pymysql://{dbUserName}:{dbPasswd}@{dbAddress}:{dbPort}/{dbName}?charset={charset}"
         self.__mysql_path = self.__mysql_format.format(dbUserName=dbUserName, dbPasswd=dbPasswd, dbAddress=dbAddress,
                                                     dbPort=dbPort, dbName=dbName, charset=charset)
-        try:
-            self.engine = create_engine(self.__mysql_path, echo=False)
-            self.metadata = MetaData(self.engine)
-            self.__Base = declarative_base(metadata=self.metadata)
-            self.__Base.metadata.reflect(self.engine)
-            for table_name in self.__Base.metadata.tables:
+        self.engine = create_engine(self.__mysql_path, echo=False)
+        self.metadata = MetaData(self.engine)
+        self.__Base = declarative_base(metadata=self.metadata)
+        self.__Base.metadata.reflect(self.engine)
+        for table_name in self.__Base.metadata.tables:
+            print dbName,table_name
+            try:
                 setattr(self,
-                        table_name, 
-                        __builtin__.type(str(table_name),
-                                            (self.__Base,),
-                                            {
-                                                '__table__':self.__Base.metadata.tables[table_name]
-                                            }
-                        ))
-            self.__Session = sessionmaker(bind=self.engine)
-            self.__session = self.__Session()
-        except Exception as e:
-            print Exception,":",e
+                        table_name, __builtin__.type(str(table_name),
+                                                        (self.__Base,),
+                                                            {'__table__':self.__Base.metadata.tables[table_name]}))
+                self.tab_list[table_name] = (getattr(self,table_name))
+            except Exception as e:
+                print Exception,":",e
+                if 'could not assemble any primary key' in e.message:
+                    setattr(self,
+                            table_name, __builtin__.type(str(table_name),
+                                                            (self.__Base,),
+                                                                {'__table__':self.__Base.metadata.tables[table_name],
+                                                                '__mapper_args__':{'primary_key':[self.__Base.metadata.tables[table_name].c.id,]}}))
+                    self.tab_list[table_name] = (getattr(self,table_name))  
+                print "add primary key id"   
+        self.__Session = sessionmaker(bind=self.engine)
+        self.__session = self.__Session()
 
     def create_schema(self, tableName, *args, **kwarg):
         try:
@@ -110,6 +141,7 @@ class mysql_DB_instance(object):
                                             '__table__':cur_table
                                         }
                         ))
+            self.tab_list[table_name] = (getattr(self,table_name))
         except Exception as e:
             print Exception,":",e
         finally:
