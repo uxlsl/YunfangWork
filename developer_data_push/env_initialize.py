@@ -11,17 +11,17 @@ class main_ms_env(object):
     def __init__(self):
         self.db_mysql_list = {}
         self.db_mssql_list = {}
-        self.db_mysql = mysql_DB_instance(dbUserName='root', 
+        self.distance_db_mysql = mysql_DB_instance(dbUserName='root', 
                                     dbPasswd='', 
                                     dbAddress='192.168.6.8', 
                                     dbName='developer_data')
-        self.db_mysql_list[self.db_mysql.db_name] = self.db_mysql
+        self.db_mysql_list[self.distance_db_mysql.db_name] = self.distance_db_mysql
 
-        self.base_db_mssql = mssql_DB_instance(dbUserName="sa", 
+        self.source_db_mysql = mysql_DB_instance(dbUserName="root", 
                                             dbPasswd="gh001",  
-                                            dbAddress="192.168.14.76", 
-                                            dbName='CheckData')
-        self.db_mssql_list[self.base_db_mssql.db_name] = self.base_db_mssql
+                                            dbAddress="192.168.10.42", 
+                                            dbName='casescore')
+        self.db_mysql_list[self.source_db_mysql.db_name] = self.source_db_mysql
         self.find_all_available_db()
         self.configure_all_available_db()
         #self.initialize_data()
