@@ -10,6 +10,11 @@ from db_instance import *
 reload(sys)
 sys.setdefaultencoding('utf8')
 
+area_sections = [(min_area,20),(20,25),(25,30),(30,35),(35,max_area),]
+unitprice_sections = [(min_unitprice,3000),(3000,4000),(4000,5000),(5000,max_unitprice),]
+totalprice_sections = [(min_totalprice,100000),(100000,max_totalprice),]
+
+
 
 class pandas_instance(mysql_DB_instance):
     def __init__(self, dbUserName, dbPasswd, dbAddress, dbPort=3306, dbName=None, charset='utf8',
@@ -41,9 +46,18 @@ class pandas_instance(mysql_DB_instance):
                         for key in sub_df['UnitShape'].value_counts().keys():
                             pass
         
-
     def create_task_district_groupby_area(self, df):
-        pass
+        for casetime in df['CaseTime'].value_counts().keys():
+            for districtname in df['DistrictName'].value_counts().keys():
+                for housetype in df['HouseType'].value_counts().keys():
+                    sub_df = df[(df['CaseTime']==casetime)&\
+                            (df['DistrictName']==districtname)&\
+                            (df['HouseType']==housetype)]
+                    if sub_df.empty:
+                        pass
+                    else:
+                        for section in area_sections:
+                            pass
 
     def create_task_district_groupby_totalprice(self, df):
         pass
@@ -52,7 +66,17 @@ class pandas_instance(mysql_DB_instance):
         pass
 
     def create_task_zone_groupby_unitshape(self, df):
-        pass
+        for casetime in df['CaseTime'].value_counts().keys():
+            for districtname in df['DistrictName'].value_counts().keys():
+                for housetype in df['HouseType'].value_counts().keys():
+                    sub_df = df[(df['CaseTime']==casetime)&\
+                            (df['DistrictName']==districtname)&\
+                            (df['HouseType']==housetype)]
+                    if sub_df.empty:
+                        pass
+                    else:
+                        for key in sub_df['UnitShape'].value_counts().keys():
+                            pass
 
     def create_task_zone_groupby_area(self, df):
         pass
@@ -64,7 +88,17 @@ class pandas_instance(mysql_DB_instance):
         pass
 
     def create_task_residentialarea_groupby_unitshape(self, df):
-        pass
+        for casetime in df['CaseTime'].value_counts().keys():
+            for districtname in df['DistrictName'].value_counts().keys():
+                for housetype in df['HouseType'].value_counts().keys():
+                    sub_df = df[(df['CaseTime']==casetime)&\
+                            (df['DistrictName']==districtname)&\
+                            (df['HouseType']==housetype)]
+                    if sub_df.empty:
+                        pass
+                    else:
+                        for key in sub_df['UnitShape'].value_counts().keys():
+                            pass
 
     def create_task_residentialarea_groupby_area(self, df):
         pass
