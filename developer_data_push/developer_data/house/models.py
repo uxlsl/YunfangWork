@@ -75,6 +75,7 @@ class HouseofferforsaleHistory(models.Model):
     expansion = models.TextField(db_column='Expansion', blank=True, null=True)  # Field name made lowercase.
     createddate = models.DateTimeField(db_column='CreatedDate', blank=True, null=True)  # Field name made lowercase.
     status = models.IntegerField(db_column='Status', blank=True, null=True)  # Field name made lowercase.
+    house_status = models.CharField(db_column='HouseStatus', max_length=64, blank=True, null=True)  # Field name made lowercase.
     remark = models.CharField(max_length=255, blank=True, null=True)
     oppositeid = models.CharField(db_column='oppositeId', max_length=50, blank=True, null=True)  # Field name made lowercase.
     crawlat = models.CharField(db_column='crawlAt', max_length=50, blank=True, null=True)  # Field name made lowercase.
@@ -99,4 +100,26 @@ class SyncHouse(models.Model):
 
 
 class SendTaskHistory(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="建立时间")
+
+
+
+class AgentStat(models.Model):
+    ZhongJieMingCheng= models.CharField(max_length=128, blank=True, null=True,verbose_name='中介名称')
+    MenDianShu = models.IntegerField(default=0, blank=True, null=True,verbose_name='门店数')
+    JingJiRenShu = models.IntegerField(blank=True, null=True,verbose_name='经纪人数量')
+    XinZengGongYingShu = models.IntegerField(blank=True, null=True,verbose_name='新增二手房供应数量')
+    ShiJian = models.CharField(max_length=128, blank=True, null=True,verbose_name='时间')
+    ChengShi = models.CharField(max_length=128, blank=True, null=True,verbose_name='城市')
+    XingZhengQu	= models.CharField(max_length=128, blank=True, null=True,verbose_name='行政区')
+    PianQu = models.CharField(max_length=128, blank=True, null=True,verbose_name='片区')
+    YeTai = models.CharField(max_length=128, blank=True, null=True,verbose_name='业态')
+
+
+class DistrictAvg(models.Model):
+    """小区均价"""
+    type = models.CharField(default='公寓', max_length=128, blank=True, null=True, verbose_name='类型')
+    chengShi = models.CharField(max_length=128, blank=True, null=True,verbose_name='城市')
+    xiaoQu = models.CharField(max_length=128, blank=True, null=True,verbose_name='小区')
+    junJia= models.FloatField(verbose_name='均价')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="建立时间")
