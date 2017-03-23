@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 
 """通知统计任务"""
+import time
 import datetime
 from django.conf import settings
 
@@ -14,10 +15,12 @@ def run():
             datetime.datetime.now().date(),
             datetime.time(0,0,0))
     while True:
-        if SyncHouse.objects.filter(created_at__gt=day):
+        if True:
+        #if SyncHouse.objects.filter(created_at__gt=day):
             feed_agent()
             celery = Celery(**settings.CELERY_SETTING)
             celery.send_task("stat")
             SendTaskHistory().save()
-            break
+            return
+        time.sleep(10)
 

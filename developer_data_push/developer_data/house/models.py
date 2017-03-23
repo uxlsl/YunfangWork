@@ -6,7 +6,8 @@ from django.db import models
 
 
 class HouseofferforsaleHistory(models.Model):
-    tid = models.AutoField(db_column='Tid', primary_key=True)  # Field name made lowercase.
+    id = models.AutoField(db_column='id', primary_key=True)  # Field name made lowercase.
+    tid = models.IntegerField(db_column='Tid', blank=True, null=True)  # Field name made lowercase.
     city = models.CharField(db_column='City', max_length=64, blank=True, null=True)  # Field name made lowercase.
     housename = models.CharField(db_column='HouseName', max_length=255, blank=True, null=True)  # Field name made lowercase.
     districtname = models.CharField(db_column='DistrictName', max_length=255, blank=True, null=True)  # Field name made lowercase.
@@ -85,8 +86,17 @@ class HouseofferforsaleHistory(models.Model):
 
 
 class AuxiliaryNotFound(models.Model):
+    casefrom = models.CharField(db_column='CaseFrom', max_length=255, blank=True, null=True)  # Field name made lowercase.
     agentname = models.CharField(db_column='AgentName', max_length=255, blank=True, null=True)  # Field name made lowercase.
     agenttelephone = models.CharField(db_column='AgentTelephone', max_length=30, blank=True, null=True)  # Field name made lowercase.
     agency = models.CharField(db_column='Agency', max_length=255, blank=True, null=True)  # Field name made lowercase.
     agentstores = models.CharField(db_column='AgentStores', max_length=255, blank=True, null=True)  # Field name made lowercase.
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="备份时间")
+
+
+class SyncHouse(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="建立时间")
+
+
+class SendTaskHistory(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="建立时间")

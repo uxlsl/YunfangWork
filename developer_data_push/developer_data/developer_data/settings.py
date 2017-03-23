@@ -148,10 +148,15 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+
+CELERY_SETTING = {
+        "broker":"redis://127.0.0.1/0",
+        "backend":"redis://127.0.0.1/1"
+}
