@@ -24,7 +24,7 @@ class mssql_DB_instance(object):
         self.__mssql_path = self.__mssql_format.format(dbUserName=dbUserName, dbPasswd=dbPasswd, dbAddress=dbAddress,
                                                     dbPort=dbPort, dbName=dbName)
         self.engine = create_engine(self.__mssql_path, echo=False)
-        self.conn = engine.connect()
+        self.conn = self.engine.connect()
         self.metadata = MetaData(self.engine)
         self.__Base = declarative_base(metadata=self.metadata)
         self.__Base.metadata.reflect(self.engine)
@@ -101,7 +101,7 @@ class mysql_DB_instance(object):
         self.__mysql_path = self.__mysql_format.format(dbUserName=dbUserName, dbPasswd=dbPasswd, dbAddress=dbAddress,
                                                     dbPort=dbPort, dbName=dbName, charset=charset)
         self.engine = create_engine(self.__mysql_path, echo=False)
-        self.conn = engine.connect()
+        self.conn = self.engine.connect()
         self.metadata = MetaData(self.engine)
         self.__Base = declarative_base(metadata=self.metadata)
         self.__Base.metadata.reflect(self.engine)
@@ -116,13 +116,16 @@ class mysql_DB_instance(object):
             except Exception as e:
                 print Exception,":",e
                 if 'could not assemble any primary key' in e.message:
-                    setattr(self,
-                            table_name, __builtin__.type(str(table_name),
-                                                            (self.__Base,),
-                                                                {'__table__':self.__Base.metadata.tables[table_name],
-                                                                '__mapper_args__':{'primary_key':[self.__Base.metadata.tables[table_name].c.id,]}}))
-                    self.tab_list[table_name] = (getattr(self,table_name))  
-                print "add primary key id"   
+                    try:
+                        setattr(self,
+                                table_name, __builtin__.type(str(table_name),
+                                                                (self.__Base,),
+                                                                    {'__table__':self.__Base.metadata.tables[table_name],
+                                                                    '__mapper_args__':{'primary_key':[self.__Base.metadata.tables[table_name].c.id,]}}))
+                        self.tab_list[table_name] = (getattr(self,table_name))  
+                        print "add primary key id"
+                    except Exception as e:
+                        print Exception,":",e 
         self.__Session = sessionmaker(bind=self.engine)
         self.__session = self.__Session()
 
