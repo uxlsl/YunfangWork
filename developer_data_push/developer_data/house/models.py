@@ -75,6 +75,9 @@ class HouseofferforsaleHistory(models.Model):
     createddate = models.DateTimeField(db_column='CreatedDate', blank=True, null=True)  # Field name made lowercase.
     status = models.IntegerField(db_column='Status', blank=True, null=True)  # Field name made lowercase.
     remark = models.CharField(max_length=255, blank=True, null=True)
+    oppositeid = models.CharField(db_column='oppositeId', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    crawlat = models.CharField(db_column='crawlAt', max_length=50, blank=True, null=True)  # Field name made lowercase.
+    housingdatatype = models.CharField(db_column='housingDataType', max_length=50, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = True
