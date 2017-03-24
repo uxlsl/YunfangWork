@@ -13,9 +13,10 @@ def residential_stat():
         'city',
         'casetime',
         'housetype',
-        'residentialareaid'))
-    df['totalprice'] = df['totalprice'].astype(float)
-    g = df.groupby(['city','casetime', 'housetype', 'residentialareaid'])['totalprice'].mean()
+        'residentialareaid',
+        'unitprice'))
+    df['unitprice'] = df['unitprice'].astype(float)
+    g = df.groupby(['city','casetime', 'housetype', 'residentialareaid'])['unitprice'].mean()
 
     for k,v in g.iteritems():
         ResidentialareaAvgPrice.objects.update_or_create(
