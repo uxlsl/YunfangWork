@@ -3,6 +3,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django_pandas.managers import DataFrameManager
 
 
 class HouseofferforsaleHistory(models.Model):
@@ -80,6 +81,8 @@ class HouseofferforsaleHistory(models.Model):
     oppositeid = models.CharField(db_column='oppositeId', max_length=50, blank=True, null=True)  # Field name made lowercase.
     crawlat = models.CharField(db_column='crawlAt', max_length=50, blank=True, null=True)  # Field name made lowercase.
     housingdatatype = models.CharField(db_column='housingDataType', max_length=50, blank=True, null=True)  # Field name made lowercase.
+
+    objects = DataFrameManager()
 
     class Meta:
         managed = True
@@ -201,6 +204,8 @@ class HouseofferforsaleHistoryCopy(models.Model):
     housingdatatype = models.CharField(db_column='housingDataType', max_length=50, blank=True, null=True)  # Field name made lowercase.
     housestatus = models.CharField(db_column='HouseStatus', max_length=64, blank=True, null=True)  # Field name made lowercase.
     datadate = models.DateTimeField(blank=True, null=True)
+
+    objects = DataFrameManager()
 
     class Meta:
         managed = False

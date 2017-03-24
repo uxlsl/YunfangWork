@@ -97,6 +97,14 @@ DATABASES = {
         'HOST': '192.168.14.81',
         'PORT': '3306',
     },
+    'basehouse':{
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'cj_houseofferforsale',
+        'USER': 'root',
+        'PASSWORD': 'yunfang_shuyanjck',
+        'HOST': '192.168.14.108',
+        'PORT': '3306',
+    },
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'develop_data',
@@ -148,7 +156,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = False
+USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)

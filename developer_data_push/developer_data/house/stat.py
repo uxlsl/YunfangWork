@@ -1,6 +1,8 @@
 # -*- coding:utf-8 -*-
 import pandas as pd
+from django.core.paginator import Paginator
 from django_pandas.io import read_frame
+
 from house.models import (
         HouseofferforsaleHistory,
         HouseofferforsaleHistoryCopy,
@@ -32,14 +34,38 @@ def residential_stat():
 
 
 def agent_stat():
-    df = read_frame(HouseofferforsaleHistory.objects.all())
     def f(x):
         return pd.Series({
             'agentstore_count': len(x['agentstores'].unique()),
             'agentname_count': len(x['agentname'].unique()),
             'house_count': len(x)})
-    total = 0
-    results = df.groupby(['casetime', 'city', 'districtname','residentialareaname','agency', 'unitshape']).apply(f)
+
+    fieldnames = (
+                'casetime', 'city', 'districtname',
+                'residentialareaname','agency', 'housetype',
+                'agentstores', 'agentname')
+
+    lst = []
+    paginator = Paginator(HouseofferforsaleHistoryCopy.objects.all().only(*fieldnames), 100000)
+    for page_idx in range(1, paginator.num_pages):
+        print('正在处理第{}页'.format(page_idx))
+        object_list = paginator.page(page_idx).object_list
+        df = object_list.to_dataframe(fieldnames=fieldnames)
+        lst.append(df.groupby(['casetime', 'city', 'districtname','residentialareaname','agency', 'housetype']).apply(f))
+        del object_list
+
+    results = None
+    for i in lst:
+        if i.empty:
+            continue
+        if results is None:
+            results = i
+        else:
+            results += i
+
+    if results.empty:
+        return
+
     for index, row in results.iterrows():
         item = []
         item.extend(index)
@@ -57,4 +83,4 @@ def agent_stat():
                     'XinZengGongYingShu':item[8],
                     })
 
-    return total,df.count()
+    return
