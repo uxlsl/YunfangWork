@@ -1,4 +1,5 @@
 # -*- coding:utf-8 -*-
+import datetime
 import pandas as pd
 from django_pandas.io import read_frame
 from house.models import (
@@ -33,8 +34,9 @@ def residential_stat():
                 )
 
 
-def agent_stat():
-    df = read_frame(HouseofferforsaleHistoryCopy.objects.filter(casetime__gte='2017-03-01 00:00:00'))
+def agent_stat_range(start, end):
+    print("进行中介统计 {}-{}".format(start, end))
+    df = read_frame(HouseofferforsaleHistory.objects.filter(casetime__gte=start, casetime__lt=end))
     #df = read_frame(HouseofferforsaleHistoryCopy.objects.all())
     def f(x):
         return pd.Series({
@@ -61,6 +63,14 @@ def agent_stat():
                 JingJiRenShu=item[7],
                 XinZengGongYingShu=item[8],
                 ))
-    AgentStat.objects.bulk_create(lst)
-    print("end")
+    AgentStat.objects.using('local').filter(ShiJian__gte=start, ShiJian__lt=end).delete()
+    AgentStat.objects.using('local').bulk_create(lst)
     return total,df.count()
+
+
+def agent_stat(start, end, step=datetime.timedelta(days=2)):
+    s = start
+    e = s + step
+    while s < end:
+        agent_stat_range(s, e)
+        s,e = e, e+step
