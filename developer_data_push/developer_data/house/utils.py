@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 
-from house.models import HouseofferforsaleHistory
+from house.models import HouseofferforsaleHistoryCopy as HouseofferforsaleHistory
 
 from house.models import AuxiliaryNotFound
 from django.db import connections
@@ -13,7 +13,7 @@ def feed_agent():
     tables = cursor.fetchall()
     info = {}
     for tablename, in tables:
-        sql='select 来源,中介人,联系电话,中介机构,中介门店,对应中介机构,对应中介门店 from {}'.format(tablename)
+        sql='select 来源,中介人,联系电话,中介机构,中介门店,对应中介机构,对应中介门店 from {}'.format(tablename.encode('utf-8'))
         cursor.execute(sql)
         for i in cursor.fetchall():
             if 'NULL' in i:
@@ -25,12 +25,13 @@ def feed_agent():
             info[k] = y
     count = 0
     total = HouseofferforsaleHistory.objects.filter(casefrom='安居客').count()
-    for h in HouseofferforsaleHistory.objects.filter(casefrom='安居客'):
+    for h in HouseofferforsaleHistory.objects.filter(casefrom='安居客', casetime__gt='2017-03-01 00:00:00'):
         if h.agency is None or h.agentstores is None:
             continue
         agentstores = h.agentstores.replace(h.agency, '')
         agentstores = agentstores.replace('.', '')
         k = (h.casefrom, h.agentname, h.agenttelephone, h.agency, agentstores)
+	print(k)
         if k in info:
             h.correspondagent, h.correspondagentstores = info[k]
             h.save()
