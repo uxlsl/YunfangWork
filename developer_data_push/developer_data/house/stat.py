@@ -4,17 +4,18 @@ import pandas as pd
 from django_pandas.io import read_frame
 from house.models import (
         HouseofferforsaleHistory,
-        HouseofferforsaleHistoryCopy,
         ResidentialareaAvgPrice,
         AgentStat
         )
 
 
-def residential_stat():
+def residential_stat_range(start, end):
     """小区均价统计
     """
-    df = read_frame(HouseofferforsaleHistoryCopy.objects.filter(casetime__gte='2017-03-01 00:00:00', housetype__contains='公寓').only(
-    #df = read_frame(HouseofferforsaleHistoryCopy.objects.all().only(
+    df = read_frame(HouseofferforsaleHistory.objects.filter(
+        casetime__gte=start,
+        casetime__lt=end,
+        housetype__contains='公寓').only(
         'city',
         'casetime',
         'housetype',
@@ -32,6 +33,17 @@ def residential_stat():
                 residentialareaid=k[3],
                 defaults={'junJia':v}
                 )
+
+
+def residential_stat(start, end, step=datetime.timedelta(days=5)):
+    """
+    小区均价统计
+    """
+    s = start
+    e = s + step
+    while s < end:
+        residential_stat_range(s, e)
+        s,e = e, e+step
 
 
 def agent_stat_range(start, end):
@@ -63,12 +75,12 @@ def agent_stat_range(start, end):
                 JingJiRenShu=item[7],
                 XinZengGongYingShu=item[8],
                 ))
-    AgentStat.objects.using('local').filter(ShiJian__gte=start, ShiJian__lt=end).delete()
-    AgentStat.objects.using('local').bulk_create(lst)
+    AgentStat.objects.filter(ShiJian__gte=start, ShiJian__lt=end).delete()
+    AgentStat.objects.bulk_create(lst)
     return total,df.count()
 
 
-def agent_stat(start, end, step=datetime.timedelta(days=2)):
+def agent_stat(start, end, step=datetime.timedelta(days=5)):
     s = start
     e = s + step
     while s < end:
