@@ -56,7 +56,7 @@ def agent_stat_range(start, end):
             'agentname_count': len(x['agentname'].unique()),
             'house_count': len(x)})
     total = 0
-    results = df.groupby(['casetime', 'city', 'districtname','residentialareaname','agency', 'unitshape']).apply(f)
+    results = df.groupby(['casetime', 'city', 'districtname','residentialareaname','agency', 'housetype']).apply(f)
 
     lst = []
     for index, row in results.iterrows():
@@ -80,7 +80,7 @@ def agent_stat_range(start, end):
     return total,df.count()
 
 
-def agent_stat(start, end, step=datetime.timedelta(days=5)):
+def agent_stat(start, end, step=datetime.timedelta(days=1)):
     s = start
     e = s + step
     while s < end:
