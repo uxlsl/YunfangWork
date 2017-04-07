@@ -81,12 +81,12 @@ WSGI_APPLICATION = 'developer_data.wsgi.application'
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
 DATABASES = {
-    'default': {
+    'local': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'house',
         'USER': 'root',
-        'PASSWORD': '3014',
-        'HOST': '127.0.0.1',
+        'PASSWORD': 'root',
+        'HOST': '192.168.10.54',
         'PORT': '3306',
     },
     'auxiliary': {
@@ -97,6 +97,23 @@ DATABASES = {
         'HOST': '192.168.14.81',
         'PORT': '3306',
     },
+    'basehouse': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'cj_houseofferforsale',
+        'USER': 'root',
+        'PASSWORD': 'yunfang_shuyanjck',
+        'HOST': '192.168.14.108',
+        'PORT': '3306',
+    },
+
+#    'default': {
+#        'ENGINE': 'django.db.backends.mysql',
+#        'NAME': 'develop_data',
+#        'USER': 'root',
+#        'PASSWORD': 'gh001',
+#        'HOST': '192.168.6.26',
+#        'PORT': '3306',
+#    }
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'develop_data',
@@ -105,7 +122,8 @@ DATABASES = {
         'HOST': '192.168.6.8',
         'PORT': '3306',
     }
-
+#
+#
 #    'foo': {
 #        'ENGINE': 'django.db.backends.mysql',
 #        'NAME': 'casescore',
